@@ -126,6 +126,8 @@ namespace MvvmBlazor.Internal.WeakEventListener
                          throw new ArgumentException("Unknown Event Name", nameof(eventName));
             if (_eventInfo.EventHandlerType == typeof(EventHandler<TArgs>))
                 _eventInfo.AddEventHandler(source, new EventHandler<TArgs>(HandleEvent));
+            if (_eventInfo.EventHandlerType == typeof(EventHandler) && typeof(TArgs) == typeof(EventArgs))
+                _eventInfo.AddEventHandler(source, new EventHandler((o, e) => HandleEvent(o, (TArgs)e)));
             else //the event type isn't just an EventHandler<> so we have to create the delegate using reflection
                 _eventInfo.AddEventHandler(source,
                     Delegate.CreateDelegate(_eventInfo.EventHandlerType, this, nameof(HandleEvent)));
